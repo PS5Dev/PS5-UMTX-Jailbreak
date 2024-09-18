@@ -13,19 +13,20 @@ class RequestHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
         self.replace_locale()
         tn = self.path.lstrip('/document/en/ps5/')
-        #print('!POST!: tn:\n'  + tn)
-        fn = tn + '.bin' # '.json'
+        print('!POST!: tn:\n'  + tn)
+        fn = tn
         if (not tn.startswith("T_")):
             if (fn!="a.bin"):
                 print('!POST!: INFO: '  + str(self.rfile.read(int(self.headers['Content-length']))),"utf-8")
                 return
             else:
-                fn = time.strftime("%Y%m%d-%H%M%S") + ".json"
+                fn = time.strftime("%Y%m%d-%H%M%S") + ".bin"
 
         print('!POST!: ' + self.path + ' -->> ' + fn)
         print('test: %d'%int(self.headers['Content-length']))
         data = self.rfile.read(int(self.headers['Content-length']))
         open("%s"%fn, "wb").write(data)
+        return super().do_POST()
 
 
 server_address = ('0.0.0.0', 443)
