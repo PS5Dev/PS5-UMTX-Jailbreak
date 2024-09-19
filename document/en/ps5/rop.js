@@ -341,6 +341,26 @@ class thread_rop extends rop {
         p.write4(this.stack_memory.add32(0x44), 0x9FE0); //mxcsr
 
         p.writestr(this.stack_memory.add32(0x50), name); //thr name
+
+        this.tid = p.malloc(0x8);
+        this.ptid = p.malloc(0x8);
+        this.tiny_stack = p.malloc(0x400);
+        this.tiny_tls = p.malloc(0x40);
+
+        this.thr_new_args = p.malloc(0x80);
+        p.write8(this.thr_new_args.add32(0x0), libSceLibcInternalBase.add32(OFFSET_lc_longjmp)); //fn
+        p.write8(this.thr_new_args.add32(0x8), this.stack_memory); //arg
+        p.write8(this.thr_new_args.add32(0x10), this.tiny_stack); //stack
+        p.write8(this.thr_new_args.add32(0x18), 0x400); //stack sz
+        p.write8(this.thr_new_args.add32(0x20), this.tiny_tls); //tls
+        p.write8(this.thr_new_args.add32(0x28), 0x40); //tls sz
+        p.write8(this.thr_new_args.add32(0x30), this.tid); //tid
+        p.write8(this.thr_new_args.add32(0x38), this.ptid); //parent tid
+        p.write8(this.thr_new_args.add32(0x40), 0); //flags
+        p.write8(this.thr_new_args.add32(0x48), 0); //rtp
+        p.write8(this.thr_new_args.add32(0x50), 0); //name ptr
+        p.write8(this.thr_new_args.add32(0x58), 0); //unk
+        p.write8(this.thr_new_args.add32(0x60), 0); //unk
     }
 
     /**
@@ -351,5 +371,10 @@ class thread_rop extends rop {
         this.fcall(libKernelBase.add32(OFFSET_lk_pthread_exit), 0x44414544);        
         await chain.call(libKernelBase.add32(OFFSET_lk_pthread_create_name_np), this.stack_memory.add32(0x48), 0x0, libSceLibcInternalBase.add32(OFFSET_lc_longjmp), this.stack_memory, this.stack_memory.add32(0x50));
         return p.read8(this.stack_memory.add32(0x48));
+    }
+
+    spawn_thread_chain() {
+        this.fcall(syscalls[431], 0); // SYS_THR_EXIT
+        chain.add_syscall(455, this.thr_new_args, 0x68); // SYS_THR_NEW
     }
 }
