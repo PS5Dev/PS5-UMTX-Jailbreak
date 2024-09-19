@@ -16,6 +16,7 @@
     <script defer src="module/mem.js"></script>
     <script defer src="module/memtools.js"></script>
     <script defer src="module/rw.js"></script>
+    <script defer src="module/syscalls.js"></script>
     <script defer src="webkit_psfree.js"></script>
     <script defer src="webkit_fontface.js"></script>
     <script>
@@ -46,6 +47,7 @@
             height: 80%;
             margin-top: 50px;
             border: none;
+            overflow: scroll;
         }
     </style>
 </head>
@@ -158,10 +160,6 @@
     </div>
     <script>
         document.getElementById("console-parent").style.opacity = 0;
-
-        window.debug_log = function(msg) {
-            document.getElementById("console").innerHTML += msg + "\n"
-        }
     </script>
 </body>
 </html>
