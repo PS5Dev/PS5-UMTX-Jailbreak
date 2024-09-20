@@ -7,6 +7,8 @@ const OFFSET_lk_pthread_create_name_np   = 0x00001AE0;
 const OFFSET_lk_pthread_join             = 0x0002DFB0;
 const OFFSET_lk_pthread_exit             = 0x0001F600;
 const OFFSET_lk__thread_list             = 0x000601A0;
+const OFFSET_lk_sleep                    = 0x00022130;
+const OFFSET_lk_sceKernelGetCurrentCpu   = 0x00002C20;
 
 const OFFSET_lc_memset                   = 0x00014040;
 const OFFSET_lc_setjmp                   = 0x0005C5D0;
@@ -374,11 +376,19 @@ let syscall_map = {
 	0x2D1: 0x00032EE0, // sys_ampr_ctrl_debug
 };
 
-// TODO
-const OFFSET_KERNEL_DATA_BASE_ALLPROC       = 0x2701C28;
-const OFFSET_KERNEL_DATA_BASE_SECURITYFLAGS = 0x63E1274;
-const OFFSET_KERNEL_DATA_BASE_TARGETID      = 0x63E127D;
-const OFFSET_KERNEL_DATA_BASE_QA_FLAGS      = 0x63E1298;
-const OFFSET_KERNEL_DATA_BASE_UTOKEN_FLAGS  = 0x63E1300;
-const OFFSET_KERNEL_DATA_BASE_PRISON0       = 0x194BA60;
-const OFFSET_KERNEL_DATA_BASE_ROOTVNODE     = 0x67134C0;
+// Kernel stack offsets
+const OFFSET_KERNEL_STACK_COOKIE                = 0x0000970;
+const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x0000848;
+
+// Kernel text-relative offsets
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x0533952;
+const OFFSET_KERNEL_DATA                        = 0x1B80000;
+
+// Kernel data-relative offsets
+const OFFSET_KERNEL_DATA_BASE_ALLPROC           = 0x2701C28;
+const OFFSET_KERNEL_DATA_BASE_SECURITYFLAGS     = 0x63E1274;
+const OFFSET_KERNEL_DATA_BASE_TARGETID          = 0x63E127D;
+const OFFSET_KERNEL_DATA_BASE_QA_FLAGS          = 0x63E1298;
+const OFFSET_KERNEL_DATA_BASE_UTOKEN_FLAGS      = 0x63E1300;
+const OFFSET_KERNEL_DATA_BASE_PRISON0           = 0x194BA60;
+const OFFSET_KERNEL_DATA_BASE_ROOTVNODE         = 0x67134C0;
