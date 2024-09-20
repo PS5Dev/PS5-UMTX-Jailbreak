@@ -381,8 +381,15 @@ const OFFSET_KERNEL_STACK_COOKIE                = 0x0000970;
 const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x0000848;
 
 // Kernel text-relative offsets
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x0533952;
 const OFFSET_KERNEL_DATA                        = 0x1B80000;
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x0533952;
+const OFFSET_KERNEL_ALLPROC                     = 0x4281C28;
+const OFFSET_KERNEL_SECURITY_FLAGS              = 0x7F61274;
+const OFFSET_KERNEL_TARGETID                    = 0x7F6127D;
+const OFFSET_KERNEL_QA_FLAGS                    = 0x7F61298;
+const OFFSET_KERNEL_UTOKEN_FLAGS                = 0x7F61300;
+const OFFSET_KERNEL_PRISON0                     = 0x34CBA60;
+const OFFSET_KERNEL_ROOTVNODE                   = 0x82934C0;
 
 // Kernel data-relative offsets
 const OFFSET_KERNEL_DATA_BASE_ALLPROC           = 0x2701C28;

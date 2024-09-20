@@ -57,6 +57,7 @@ class rop {
             }
         } else {
             alert("You're trying to write a non number/non int64 value?");
+            throw new Error("invalid rop entry, not an int64");
         }
     }
 
