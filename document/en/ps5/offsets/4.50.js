@@ -7,6 +7,8 @@ const OFFSET_lk_pthread_create_name_np   = 0x00001B60;
 const OFFSET_lk_pthread_join             = 0x0002FAD0;
 const OFFSET_lk_pthread_exit             = 0x00020A80;
 const OFFSET_lk__thread_list             = 0x000601A8;
+const OFFSET_lk_sleep                    = 0xDEADC0DE; // TODO
+const OFFSET_lk_sceKernelGetCurrentCpu   = 0xDEADC0DE; // TODO
 
 const OFFSET_lc_memset                   = 0x000148F0;
 const OFFSET_lc_setjmp                   = 0x0005E9B0;
@@ -373,16 +375,17 @@ let syscall_map = {
     0x2D2: 0x32E00, // sys_workspace_ctrl
 };
 
-const OFFSET_KERNEL_DATA_KQUEUE_LOW_WORD    = 0x88F7;
-const OFFSET_KERNEL_DATA_KQUEUE_BASE_SLIDE  = 0x3188F7;
-const OFFSET_KERNEL_TEXT_KQUEUE_BASE_SLIDE  = 0xF188F7;
-const OFFSET_KERNEL_DATA_BASE_ALLPROC       = 0x27EDCB8;
-const OFFSET_KERNEL_DATA_BASE_PS4SDK        = 0x16ABE88;
-const OFFSET_KERNEL_DATA_BASE_PS5SDK_       = 0x16ABEE8;
-const OFFSET_KERNEL_DATA_BASE_PS5SDK        = 0x6506598;
-const OFFSET_KERNEL_DATA_BASE_SECURITYFLAGS = 0x6506474;
-const OFFSET_KERNEL_DATA_BASE_TARGETID      = 0x650647D;
-const OFFSET_KERNEL_DATA_BASE_QA_FLAGS      = 0x6506498;
-const OFFSET_KERNEL_DATA_BASE_UTOKEN_FLAGS  = 0x6506500;
-const OFFSET_KERNEL_DATA_BASE_PRISON0       = 0x1D34D00;
-const OFFSET_KERNEL_DATA_BASE_ROOTVNODE     = 0x66E74C0;
+// Kernel stack offsets
+const OFFSET_KERNEL_STACK_COOKIE                = 0x0000970;  // CHECK
+const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0xDEADC0DE; // TODO
+
+// Kernel text-relative offsets
+const OFFSET_KERNEL_DATA                        = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_ALLPROC                     = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_SECURITY_FLAGS              = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_TARGETID                    = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_QA_FLAGS                    = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_UTOKEN_FLAGS                = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_PRISON0                     = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_ROOTVNODE                   = 0xDEADC0DE; // TODO

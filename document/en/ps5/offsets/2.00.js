@@ -46,7 +46,6 @@ let wk_gadgetmap = {
 	"inc dword [rax]":  0x004C56BA,
 };
 
-// TODO
 let syscall_map = {
 	0x001: 0x00031A7A, // sys_exit
 	0x002: 0x00033420, // sys_fork
