@@ -11,6 +11,7 @@ This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 se
 
 For FW < 3.00, all that should be required is gadget offsets. The following firmwares are currently supported:
 - 2.00
+- 2.30
 - 2.50
 
 ## Currently included

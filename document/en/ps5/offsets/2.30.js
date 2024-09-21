@@ -376,15 +376,13 @@ let syscall_map = {
 	0x2D1: 0x00032EE0, // sys_ampr_ctrl_debug
 };
 
-// TODO: something below doesn't work, leaving 2.50 offsets in-tact
-
 // Kernel stack offsets
 const OFFSET_KERNEL_STACK_COOKIE                = 0x0000970;
-const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x0000848; // likely to be right but unchecked
+const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x0000848;
 
 // Kernel text-relative offsets
 const OFFSET_KERNEL_DATA                        = 0x1B80000;
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x0533B12;
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x05339B2;
 const OFFSET_KERNEL_ALLPROC                     = 0x4281C28;
 const OFFSET_KERNEL_SECURITY_FLAGS              = 0x7F61274;
 const OFFSET_KERNEL_TARGETID                    = 0x7F6127D;
