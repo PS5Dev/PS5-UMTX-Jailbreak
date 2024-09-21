@@ -1,7 +1,7 @@
 # PS5 UMTX Jailbreak
 ---
 ## Summary
-This repo contains a WebKit ROP exploit of the [UMTX race use-after-free (CVE-2024-43102) vulnerability](https://www.freebsd.org/security/advisories/FreeBSD-SA-24:14.umtx.asc) reported by Synaktiv. It's basically a port of [fail0verflow](https://github.com/fail0verflow/ps5-umtxdbg/)s and [flatz](https://gist.github.com/flatz/89dfe9ed662076742f770f92e95e12a7) exploit strategy. It abuses the UAF to get a read/write mapping into a kernel thread stack, and leverages pipe reads and writes to establish a (not quite ideal) arbitrary read/write primitive in the kernel. This read/write is then escalated to a better one that leverages an ipv6 socket pair and pipe pair for stable read/write that can be passed to payloads in the same manner that was possible with the previous [IPV6 PS5 kernel exploit](https://github.com/Cryptogenic/PS5-IPV6-Kernel-Exploit).
+This repo contains a WebKit ROP exploit of the [UMTX race use-after-free (CVE-2024-43102) vulnerability](https://www.freebsd.org/security/advisories/FreeBSD-SA-24:14.umtx.asc) reported by Synaktiv. It's basically a port of [fail0verflow's](https://github.com/fail0verflow/ps5-umtxdbg/) and [flatz'](https://gist.github.com/flatz/89dfe9ed662076742f770f92e95e12a7) exploit strategy. It abuses the UAF to get a read/write mapping into a kernel thread stack, and leverages pipe reads and writes to establish a (not quite ideal) arbitrary read/write primitive in the kernel. This read/write is then escalated to a better one that leverages an ipv6 socket pair and pipe pair for stable read/write that can be passed to payloads in the same manner that was possible with the previous [IPV6 PS5 kernel exploit](https://github.com/Cryptogenic/PS5-IPV6-Kernel-Exploit).
 
 The page itself is a stripped down and modified version of [idlesauce's PS5 Exploit Host](https://github.com/idlesauce/PS5-Exploit-Host) as it already did the work of gluing psfree to my previously used code style. This host is also my personal choice for running things as it's very smooth and integrates useful payloads, hopefully it is updated to support this exploit in the near future <3.
 
@@ -45,19 +45,23 @@ To use the ELF loader, run the exploit until completion. Upon completion it'll r
 
 ## Exploit strategy notes
 **Initial double free**
+
 The strategy for this exploit largely comes from fail0verflow and flatz. See [chris@accessvector's writeup](https://accessvector.net/2024/freebsd-umtx-privesc) for more information on the vulnerability. Upon exploiting, it essentially gives us a double free. We can use this to overlap the `vmobject` of a kernel stack with that of an `mmap` mapping to get a window into a kernel thread's stack. This very powerful capability lets us read/write to arbitrary kernel pointers on the stack, giving ASLR defeat and the ability to create primitives. The thread which we have access to it's stack we'll call the victim thread.
 
 **Getting arbitrary read/write**
+
 By creating a pipe and filling up the pipe buffer on the main thread, then trying to write to it using the victim thread, the victim thread will block waiting for space to clear up in the buffer. During this time, we can use our window into the kernel stack to change the `iovec` pointers to kernel pointers and set flags to get them treated as kernel addresses. By then reading the pipe on the main thread, we can get kernel arbitrary read.
 
 Similarly, by getting the victim thread to read on the pipe, it will block waiting for incoming data. We can then, again, overwrite the `iovec` pointers and make them kernel pointers, and write data on the main thread to get kernel arbitrary write.
 
 **Upgrading arbitrary read/write**
+
 By this stage, we have an arbitrary read/write with no real constraints, but we're tied to using multithreading and blocking for it to work which isn't ideal. We then use the R/W to iterate the process' FD table and overlap the `pktopts` of two IPV6 sockets. We can then create another arbitrary read/write via the `IPV6_PKTINFO` sockopt. This read/write primitive again isn't ideal though as it's constrained in size and contents due to the underlying socket option. We keep this step mostly to emulate the scenario of the IPV6 exploit, which most payloads and such were built on.
 
 We can get a better read/write via pipes. By again iterating the process' FD table and modifying pipemap buffer objects, we can establish read/write. The IPV6 socket pair is used as a mechanism to control the pipemap buffer.
 
 **Fixing/side-stepping corruption**
+
 If we leave things as is and attempt to close the browser, the system will crash. This is because the process cleanup will try to free the kernel stack which has already been free'd. To avoid this, we do two things:
 
 1. Intentionally leak the refcount on the shm FD we use for the initial double free so that it isn't free'd upon process exit
