@@ -11,6 +11,9 @@ This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 se
 
 For FW < 3.00, all that should be required is gadget offsets. The following firmwares are currently supported:
 - 2.00
+- 2.20
+- 2.25
+- 2.26
 - 2.30
 - 2.50
 
@@ -39,8 +42,7 @@ For FW < 3.00, all that should be required is gadget offsets. The following firm
 
 ## Future work
 - [ ] Update exploit strat for FW >= 3.xx to account for mitigations
-- [ ] Add offsets for more firmwares
-  - [ ] 2.30 userland offsets seem OK, kernel offsets need fixing
+- [ ] Add offsets for more (lower) firmwares
 - [ ] Add WebKit exploit for FW >= 6.00.
 
 ## Using ELF Loader
