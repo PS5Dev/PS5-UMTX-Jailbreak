@@ -16,13 +16,25 @@ def server_program():
     print("Connection from: " + str(address))
 
     dump_data = bytearray()
+    first_packet_recv = False
+    first_packet_time = time.monotonic()
     while True:
         try:
             data = conn.recv(0x10000)
             if not data:
                 break
+            if not first_packet_recv:
+                first_packet_recv = True
+                first_packet_time = time.monotonic()
+
             dump_data.extend(data)
-            print("Received " + str(len(dump_data)) + " bytes...")
+            data_recv = len(dump_data)
+
+            kbps = 0
+            if first_packet_time != time.monotonic():
+                kbps = round(data_recv / (time.monotonic() - first_packet_time) / 1024)
+
+            print("Received {} bytes ({} kb/s)...".format(data_recv, kbps))
         except socket.timeout:
             print("Timeout reached for receiving data (1 min)")
             break
