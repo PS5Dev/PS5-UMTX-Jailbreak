@@ -1,11 +1,6 @@
 const OFFSET_wk_vtable_first_element     = 0x00134790;
 const OFFSET_wk_memset_import            = 0x02516908;
 const OFFSET_wk___stack_chk_guard_import = 0x02516858;
-/*2.00
-const OFFSET_wk_vtable_first_element     = 0x00134790;
-const OFFSET_wk_memset_import            = 0x02516908;
-const OFFSET_wk___stack_chk_guard_import = 0x02516858;
-*/
 
 const OFFSET_lk___stack_chk_guard        = 0x00069190;
 const OFFSET_lk_pthread_create_name_np   = 0x00001AE0;
