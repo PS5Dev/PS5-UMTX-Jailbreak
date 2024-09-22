@@ -10,6 +10,8 @@ Ultimately a payload loader will be launched to listen for payload ELFs on port 
 This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 seem to have additional mitigations that require tweaking of the exploit to work. As I'm mostly only interested in lower firmwares, this exploit doesn't support FW >= 3.00 as of yet. Furthermore, the WebKit vulnerability that we chain with was patched in 6.00, so another WebKit exploit that achieves userland read/write will be required for these systems. Again, as I'm not focused on higher firmwares, this is left uncompleted right now.
 
 For FW < 3.00, all that should be required is gadget offsets. The following firmwares are currently supported:
+- 1.00
+- 1.02
 - 1.05
 - 1.10
 - 1.11
