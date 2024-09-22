@@ -24,6 +24,7 @@ For FW < 3.00, all that should be required is gadget offsets. The following firm
 - 2.26
 - 2.30
 - 2.50
+- 2.70
 
 ## Currently included
 - Obtains arbitrary kernel read/write
