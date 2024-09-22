@@ -41,7 +41,7 @@ let wk_gadgetmap = {
 	"setg al":          0x0002CE6C,
 	"setl al":          0x0049C6CC,
 	"shl rax, 3":       0x01735A53,
-	"add rax, rdx":     0x01CB24CD,
+	"add rax, rcx":     0x0019C4F6,
 	"mov rax, [rax]":   0x000EFD0C,
 	"inc dword [rax]":  0x004C56BA,
 };

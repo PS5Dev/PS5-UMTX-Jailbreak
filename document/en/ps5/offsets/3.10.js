@@ -7,8 +7,8 @@ const OFFSET_lk_pthread_create_name_np   = 0x0002CED0;
 const OFFSET_lk_pthread_join             = 0x0002F460;
 const OFFSET_lk_pthread_exit             = 0x00020A80;
 const OFFSET_lk__thread_list             = 0x000601A8;
-const OFFSET_lk_sleep                    = 0xDEADC0DE; // TODO
-const OFFSET_lk_sceKernelGetCurrentCpu   = 0xDEADC0DE; // TODO
+const OFFSET_lk_sleep                    = 0x00023340;
+const OFFSET_lk_sceKernelGetCurrentCpu   = 0x00002C10;
 
 const OFFSET_lc_memset                   = 0x00014B50;
 const OFFSET_lc_setjmp                   = 0x0005F940;
@@ -41,7 +41,7 @@ let wk_gadgetmap = {
     "setg al"        : 0x002F89AA,
     "setl al"        : 0x000E0D91,
     "shl rax, 3"     : 0x01A26823, //check
-    "add rax, rdx"   : 0x016D53B2, //check
+    "add rax, rcx"   : 0x000B0E59,
     "mov rax, [rax]" : 0x00047FEC,
     "inc dword [rax]": 0x004971AA,
 };
@@ -376,16 +376,16 @@ let syscall_map = {
 };
 
 // Kernel stack offsets
-const OFFSET_KERNEL_STACK_COOKIE                = 0x0000970;  // CHECK
+const OFFSET_KERNEL_STACK_COOKIE                = 0x00000970; // CHECK
 const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0xDEADC0DE; // TODO
 
 // Kernel text-relative offsets
-const OFFSET_KERNEL_DATA                        = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_ALLPROC                     = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_SECURITY_FLAGS              = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_TARGETID                    = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_QA_FLAGS                    = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_UTOKEN_FLAGS                = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_PRISON0                     = 0xDEADC0DE; // TODO
-const OFFSET_KERNEL_ROOTVNODE                   = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_DATA                        = 0x00BD0000;
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0xDEADC0DE;
+const OFFSET_KERNEL_ALLPROC                     = 0x0333DC58;
+const OFFSET_KERNEL_SECURITY_FLAGS              = 0x07036474;
+const OFFSET_KERNEL_TARGETID                    = 0x0703647D;
+const OFFSET_KERNEL_QA_FLAGS                    = 0x07036498;
+const OFFSET_KERNEL_UTOKEN_FLAGS                = 0x07036500;
+const OFFSET_KERNEL_PRISON0                     = 0x02892670;
+const OFFSET_KERNEL_ROOTVNODE                   = 0x0737B4C0;
