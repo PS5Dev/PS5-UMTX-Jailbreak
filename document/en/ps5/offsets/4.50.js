@@ -376,12 +376,12 @@ let syscall_map = {
 };
 
 // Kernel stack offsets
-const OFFSET_KERNEL_STACK_COOKIE                = 0x00000970; // CHECK
-const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_STACK_COOKIE                = 0x00000930;
+const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x00000808;
 
 // Kernel text-relative offsets
 const OFFSET_KERNEL_DATA                        = 0x00C00000;
-const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0xDEADC0DE; // TODO
+const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x0057D3C2;
 const OFFSET_KERNEL_ALLPROC                     = 0x033EDCB8;
 const OFFSET_KERNEL_SECURITY_FLAGS              = 0x07106474;
 const OFFSET_KERNEL_TARGETID                    = 0x0710647D;
