@@ -7,11 +7,17 @@ The page itself is a stripped down and modified version of [idlesauce's PS5 Expl
 
 Ultimately a payload loader will be launched to listen for payload ELFs on port 9021. I recommend the [PS5 Payload Dev SDK](https://github.com/ps5-payload-dev/sdk/) as it should have full compatibility with this loader when kernel offsets are added.
 
-This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 seem to have additional mitigations that require tweaking of the exploit to work. As I'm mostly only interested in lower firmwares, this exploit doesn't support FW >= 3.00 as of yet. Furthermore, the WebKit vulnerability that we chain with was patched in 6.00, so another WebKit exploit that achieves userland read/write will be required for these systems. Again, as I'm not focused on higher firmwares, this is left uncompleted right now.
+This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 seem to have additional mitigations that require tweaking of the exploit to work. ~~As I'm mostly only interested in lower firmwares, this exploit doesn't support FW >= 3.00 as of yet.~~ Furthermore, the WebKit vulnerability that we chain with was patched in 6.00, so another WebKit exploit that achieves userland read/write will be required for these systems. Again, as I'm not focused on higher firmwares, this is left uncompleted right now.
 
 For FW < 3.00, all that should be required is gadget offsets. The following firmwares are currently supported:
 - 1.00
 - 1.02
+
+**Important Notes**
+- 3.00+ has lower reliability and may take longer to execute, if you're stuck at "triggering race" for a while, close browser and retry.
+- 5.00+ the ELF loader currently doesn't work, because we can no longer properly invoke dlsym, payload SDK needs changes.
+
+The following firmwares are currently supported:
 - 1.05
 - 1.10
 - 1.11
@@ -25,12 +31,21 @@ For FW < 3.00, all that should be required is gadget offsets. The following firm
 - 2.30
 - 2.50
 - 2.70
+- 3.00
+- 3.20
+- 4.00
+- 4.02
+- 4.03
+- 4.50
+- 5.00
+- 5.10
+- 5.50
 
 ## Currently included
 - Obtains arbitrary kernel read/write
 - Enables debug settings menu (note: you will have to fully exit settings and go back in to see it).
 - Gets root privileges and breaks out of sandbox/jail.
-- Runs John Tornblom's ELF loader on port 9021 for payloads to execute.
+- Runs John Tornblom's ELF loader on port 9021 for payloads to execute (on < 5.00FW)
 
 ## Limitations
 - This exploit achieves read/write, **but not code execution**. This is because we cannot currently dump kernel code for gadgets, as kernel .text pages are marked as eXecute Only Memory (XOM). Attempting to read kernel .text pointers will panic!
@@ -38,7 +53,6 @@ For FW < 3.00, all that should be required is gadget offsets. The following firm
 - Clang-based fine-grained Control Flow Integrity (CFI) is present and enforced.
 - Supervisor Mode Access Prevention/Execution (SMAP/SMEP) cannot be disabled, due to the HV.
 - FW >= 6.00 requires new WebKit exploit and is thus not supported.
-- FW >= 3.00 requires strategy adjustments to exploit UAF.
 
 ## How to use
 1. Configure fakedns via `dns.conf` to point `manuals.playstation.net` to your PCs IP address
@@ -50,7 +64,7 @@ For FW < 3.00, all that should be required is gadget offsets. The following firm
 6. Optional: Uncomment kernel .data dump code and run dump server script (note: address/port must be substituted in exploit.js).
 
 ## Future work
-- [ ] Update exploit strat for FW >= 3.xx to account for mitigations
+- [X] ~~Update exploit strat for FW >= 3.xx to account for mitigations~~
 - [X] ~~Add offsets for more (lower) firmwares~~
 - [ ] Add WebKit exploit for FW >= 6.00.
 

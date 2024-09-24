@@ -26,7 +26,10 @@ class RequestHandler(SimpleHTTPRequestHandler):
         print('test: %d'%int(self.headers['Content-length']))
         data = self.rfile.read(int(self.headers['Content-length']))
         open("%s"%fn, "wb").write(data)
-        return super().do_POST()
+        
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
 
 
 server_address = ('0.0.0.0', 443)
