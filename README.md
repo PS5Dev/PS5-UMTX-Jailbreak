@@ -36,6 +36,7 @@ The following firmwares are currently supported:
 - 4.03
 - 4.50
 - 5.00
+- 5.02
 - 5.10
 - 5.50
 
