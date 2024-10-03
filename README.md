@@ -14,32 +14,11 @@ This vulnerability impacts 1.00 firmware to 7.61 firmware, however FW >= 3.00 se
 - 5.00+ the ELF loader currently doesn't work, because we can no longer properly invoke dlsym, payload SDK needs changes.
 
 The following firmwares are currently supported:
-- 1.00
-- 1.02
-- 1.05
-- 1.10
-- 1.11
-- 1.12
-- 1.13
-- 1.14
-- 2.00
-- 2.20
-- 2.25
-- 2.26
-- 2.30
-- 2.50
-- 2.70
-- 3.00
-- 3.20
-- 4.00
-- 4.02
-- 4.03
-- 4.50
-- 4.51
-- 5.00
-- 5.02
-- 5.10
-- 5.50
+ - 1.xx [1.00, 1.02, 1.05, 1.10, 1.11, 1.12, 1.13, 1.14]
+ - 2.xx [2.00, 2.20, 2.25, 2.26, 2.30, 2.50, 2.70]
+ - 3.xx [3.00, 3.20]
+ - 4.xx [4.00, 4.02, 4.03, 4.50, 4.51]
+ - 5.xx [5.00, 5.02, 5.10, 5.50]
 
 ## Currently included
 - Obtains arbitrary kernel read/write
