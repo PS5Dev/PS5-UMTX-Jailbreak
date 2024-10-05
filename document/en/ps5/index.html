@@ -1,41 +1,11 @@
 <html manifest="cache.appcache">
+<!--<html>-->
 
 <head>
     <title>PS5 UMTX Jailbreak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="main.css">
 
-    <script defer src="int64.js"></script>
-    <script defer src="rop.js"></script>
-    <script defer src="exploit.js"></script>
-    <script defer src="custom_host_stuff.js"></script>
-    <script defer src="appcache_handler.js"></script>
-    <script defer src="module/utils.js"></script>
-    <script defer src="module/constants.js"></script>
-    <script defer src="module/int64.js"></script>
-    <script defer src="module/mem.js"></script>
-    <script defer src="module/memtools.js"></script>
-    <script defer src="module/rw.js"></script>
-    <script defer src="module/syscalls.js"></script>
-    <script defer src="webkit_psfree.js"></script>
-    <script defer src="webkit_fontface.js"></script>
-    <script>
-        addEventListener('unhandledrejection', (event) => {
-            const reason = event.reason;
-            // We log the line and column numbers as well since some exceptions (like
-            // SyntaxError) do not show it in the stack trace.
-            alert(
-                `${reason}\n`
-                + `${reason.sourceURL}:${reason.line}:${reason.column}\n`
-                + `${reason.stack}`
-            );
-            //alert(reason);
-            throw reason;
-        });
-        window.addEventListener('load', function () {
-            onload_setup();
-        }, false);
-    </script>
     <style>
         .log {
             display: block;
@@ -130,12 +100,12 @@
 
         <div>
             <div id="console-parent" class="opacity-transition"
-                style="display: flex; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
+                style="display: none; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
                 <textarea id="console" class="log"></textarea>
             </div>
 
             <div id="run-jb-parent" class="opacity-transition"
-                style="display: flex; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
+                style="display: none; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
                 <a tabindex="0" class="btn" style="max-width: 50%;" id="run-jb" onclick="runJailbreak()">Jailbreak</a>
             </div>
 
@@ -161,8 +131,43 @@
             </center>
         </div>
     </div>
+
+    <script src="int64.js"></script>
+    <script src="rop.js"></script>
+    <script src="exploit.js"></script>
+    <script src="custom_host_stuff.js"></script>
+    <script src="appcache_handler.js"></script>
+    <script src="module/utils.js"></script>
+    <script src="module/constants.js"></script>
+    <script src="module/int64.js"></script>
+    <script src="module/mem.js"></script>
+    <script src="module/memtools.js"></script>
+    <script src="module/rw.js"></script>
+    <script src="module/syscalls.js"></script>
+    <script src="webkit_psfree.js"></script>
+    <script src="webkit_fontface.js"></script>
+
     <script>
-        document.getElementById("console-parent").style.opacity = 0;
+        addEventListener('unhandledrejection', (event) => {
+            const reason = event.reason;
+            // We log the line and column numbers as well since some exceptions (like
+            // SyntaxError) do not show it in the stack trace.
+            alert(
+                `${reason}\n`
+                + `${reason.sourceURL}:${reason.line}:${reason.column}\n`
+                + `${reason.stack}`
+            );
+            //alert(reason);
+            throw reason;
+        });
+
+        //window.addEventListener('load', function () {
+        //    onload_setup();
+        //}, false);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("run-jb-parent").style.display = "flex";
+        });
     </script>
 </body>
 </html>
