@@ -1,213 +1,197 @@
-async function runJailbreak() {
-    let l2_redirector = document.getElementById("l2-redirect");
-    l2_redirector.style.opacity = "0";
+const LOCALSTORE_WK_EXPLOIT_TYPE_KEY = "wk_exploit_type";
+const LOCALSTORE_WK_EXPLOIT_TYPE_VALUE_PSFREE = "PSFree";
+const LOCALSTORE_WK_EXPLOIT_TYPE_VALUE_FONTFACE = "FontFace";
 
-    // Hide jailbreak button and show console
-    document.getElementById("run-jb-parent").style.display = "none";
-    document.getElementById("console-parent").style.display = "flex";
+const LOCALSTORE_REDIRECTOR_LAST_URL_KEY = "redirector_last_url";
 
-    setTimeout(async () => {
-        let wk_exploit_type = localStorage.getItem("wk_exploit_type");
-        if (wk_exploit_type == "psfree") {
+const SESSIONSTORE_RUN_WK_EXPLOIT_ON_LOAD_KEY = "run_wk_exploit_on_load";
+
+let exploitStarted = false;
+async function runJailbreak(animate = true) {
+    if (exploitStarted) {
+        return;
+    }
+    exploitStarted = true;
+
+    await switchPage("console-view", animate);
+
+    // not setting it in the catch since we want to retry both on a handled error and on a browser crash
+    sessionStorage.setItem(SESSIONSTORE_RUN_WK_EXPLOIT_ON_LOAD_KEY, "true");
+
+    let wk_exploit_type = localStorage.getItem(LOCALSTORE_WK_EXPLOIT_TYPE_KEY);
+    try {
+        if (!animate) {
+            // hack but waiting a bit seems to help
+            // this only gets hit when auto-running on page load
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        if (wk_exploit_type == LOCALSTORE_WK_EXPLOIT_TYPE_VALUE_PSFREE) {
             debug_log("[+] running psfree for userland exploit...");
             await run_psfree();
-        } else if (wk_exploit_type == "fontface") {
+        } else if (wk_exploit_type == LOCALSTORE_WK_EXPLOIT_TYPE_VALUE_FONTFACE) {
             debug_log("[+] running fontface for userland exploit...");
             await run_fontface();
         }
-    }, 100);
+    } catch (error) {
+        debug_log("[!] Webkit exploit failed: " + error);
+        debug_log("[+] Retrying in 2 seconds...");
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        window.location.reload();
+        return; // this is necessary
+    }
+
+    sessionStorage.removeItem(SESSIONSTORE_RUN_WK_EXPLOIT_ON_LOAD_KEY);
+    run_hax();
 }
 
-function onload_setup() {
+async function switchPage(id, animate = true) {
+    const parentElement = document.getElementById('main-content');
+    const targetElement = document.getElementById(id);
+    if (!targetElement || targetElement.parentElement !== parentElement) {
+        throw new Error('Invalid target element');
+    }
+
+    const oldSelectedElement = parentElement.querySelector('.selected');
+
+    if (oldSelectedElement) {
+        if (animate) {
+            let oldSelectedElementTransitionEnd = new Promise((resolve) => {
+                oldSelectedElement.addEventListener("transitionend", function handler(event) {
+                    // we get back transitionend for children too but we don't want that
+                    if (event.target === oldSelectedElement) {
+                        oldSelectedElement.removeEventListener("transitionend", handler);
+                        resolve();
+                    }
+                });
+            });
+            oldSelectedElement.classList.remove('selected');
+            await oldSelectedElementTransitionEnd;
+        } else {
+            // override transition with none for instant switch
+            oldSelectedElement.style.setProperty('transition', 'none', 'important');
+            oldSelectedElement.offsetHeight;
+            oldSelectedElement.classList.remove('selected');
+            oldSelectedElement.offsetHeight;
+            oldSelectedElement.style.removeProperty('transition');
+        }
+    }
+
+    if (animate) {
+        let targetElementTransitionEnd = new Promise((resolve) => {
+            targetElement.addEventListener("transitionend", function handler(event) {
+                // we get back transitionend for children too but we don't want that
+                if (event.target === targetElement) {
+                    targetElement.removeEventListener("transitionend", handler);
+                    resolve();
+                }
+            });
+        });
+        targetElement.classList.add('selected');
+        await targetElementTransitionEnd;
+    } else {
+        // override transition with none for instant switch
+        targetElement.style.setProperty('transition', 'none', 'important');
+        targetElement.offsetHeight;
+        targetElement.classList.add('selected');
+        targetElement.offsetHeight;
+        targetElement.style.removeProperty('transition');
+    }
+}
+
+
+function registerAppCacheEventHandlers() {
+    var appCache = window.applicationCache;
+
+    let toast;
+
+    function createOrUpdateAppCacheToast(message, timeout = -1) {
+        if (!toast) {
+            toast = showToast(message, timeout);
+        } else {
+            updateToastMessage(toast, message);
+        }
+
+        if (timeout > 0) {
+            setTimeout(() => {
+                removeToast(toast);
+                toast = null;
+            }, timeout);
+        }
+    }
 
     if (document.documentElement.hasAttribute("manifest")) {
-        add_cache_event_toasts();
+        if (!navigator.onLine) {
+            createOrUpdateAppCacheToast('Offline.', 2000);
+        } else {
+            // this is redundant
+            createOrUpdateAppCacheToast("Checking for updates...");
+        }        
     }
 
-    create_redirector_buttons();
+    appCache.addEventListener('cached', function (e) {
+        createOrUpdateAppCacheToast('Finished caching site.', 1500);
+    }, false);
 
-    document.documentElement.style.overflowX = 'hidden';
-    let redirector = document.getElementById("redirector-view");
-    let center_view = document.getElementById("center-view");
+    appCache.addEventListener('checking', function (e) {
+        createOrUpdateAppCacheToast('Checking for updates...');
+    }, false);
 
-    let menu_overlay = document.getElementById("menu-overlay");
-    let menu = document.getElementById("menu-bar-wrapper");
+    appCache.addEventListener('downloading', function (e) {
+        createOrUpdateAppCacheToast('Downloading new cache...');
+    }, false);
 
-    if (localStorage.getItem("wk_exploit_type") == null) {
-        localStorage.setItem("wk_exploit_type", "psfree");
-    }
+    appCache.addEventListener('error', function (e) {
+        // only show error toast if we're online
+        if (navigator.onLine) {
+            createOrUpdateAppCacheToast('Error while caching site.', 5000);
+        } else {
+            createOrUpdateAppCacheToast('Offline.', 2000);
+        }
+    }, false);
 
-    create_redirector_buttons();
+    appCache.addEventListener('noupdate', function (e) {
+        createOrUpdateAppCacheToast('Cache is up-to-date.', 1500);
+    }, false);
+
+    appCache.addEventListener('obsolete', function (e) {
+        createOrUpdateAppCacheToast('Site is obsolete.');
+    }, false);
+
+    appCache.addEventListener('progress', function (e) {
+        let percentage = Math.round((e.loaded / e.total) * 100);
+
+        createOrUpdateAppCacheToast('Downloading new cache... ' + percentage + '%');
+
+        // the last item takes an unreasonably long time to complete (with a big update)
+        // ig its doing some extra stuff before the last event is fired
+        // so show a new message for it
+        if (e.loaded + 1 == e.total) {
+            createOrUpdateAppCacheToast("Processing... This may take a minute.");
+        }
+    }, false);
+
+    appCache.addEventListener('updateready', function (e) {
+        if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+            createOrUpdateAppCacheToast('The site was updated. Refresh to switch to updated version');
+        }
+    }, false);
 }
 
-function redirectorGo() {
-    let redirector_input = document.getElementById("redirector-input");
-    let redirector_input_value = redirector_input.value;
-    if (redirector_input_value == "" || redirector_input_value == "http://") {
-        showToast("Enter a valid URL.");
-        return;
-    }
+function registerL2ButtonHandler() {
+    document.addEventListener("keydown", async (event) => {
+        if (event.keyCode === 118) {
+            const lastRedirectorValue = localStorage.getItem(LOCALSTORE_REDIRECTOR_LAST_URL_KEY) || "http://";
+            const redirectorValue = prompt("Enter url", lastRedirectorValue);
 
-    let redirector_history_store_raw = localStorage.getItem("redirector_history");
-
-    if (redirector_history_store_raw == null) {
-        localStorage.setItem("redirector_history", JSON.stringify([redirector_input_value]));
-    }
-    else {
-        let redirector_history_store = JSON.parse(redirector_history_store_raw);
-
-        redirector_history_store.unshift(redirector_input_value);
-
-        localStorage.setItem("redirector_history", JSON.stringify(redirector_history_store));
-    }
-
-
-    window.location = redirector_input_value;
-}
-
-const default_pinned_websites = [
-    "https://es7in1.site/ps5",
-    "https://google.com"
-]
-
-const dummy_history = [
-    "https://es7in1.site/ps5",
-    "https://google.com",
-    "https://ps5jb.pages.dev",
-    "https://github.com",
-    "https://duckduckgo.com",
-    "https://youtube.com",
-    "https://twitter.com",
-    "https://reddit.com",
-    "https://facebook.com",
-    "https://instagram.com",
-    "https://amazon.com",
-    "https://wikipedia.org",
-    "https://netflix.com"
-]
-
-function create_redirector_buttons() {
-    let redirector_pinned_store_raw = localStorage.getItem("redirector_pinned");
-
-    if (redirector_pinned_store_raw == null) { // || redirector_pinned_store_raw == "[]"
-        localStorage.setItem("redirector_pinned", JSON.stringify(default_pinned_websites));
-        redirector_pinned_store_raw = localStorage.getItem("redirector_pinned");
-    }
-
-    let redirector_pinned_store = JSON.parse(redirector_pinned_store_raw);
-
-    const redirector_pinned = document.getElementById("redirector-pinned");
-
-    redirector_pinned.innerHTML = "";
-
-    let pinned_text = document.createElement("p");
-    pinned_text.innerHTML = "Pinned";
-    pinned_text.style.textAlign = "center";
-
-    redirector_pinned.appendChild(pinned_text);
-
-
-    for (let i = 0; i < redirector_pinned_store.length; i++) {
-        let div = document.createElement("div");
-        div.style.display = "flex";
-
-        let a1 = document.createElement("a");
-        a1.className = "btn small-btn";
-        a1.tabIndex = "0";
-        a1.innerHTML = redirector_pinned_store[i];
-        a1.onclick = () => {
-            window.location.replace(redirector_pinned_store[i]);
-        };
-
-        div.appendChild(a1);
-
-        let a2 = document.createElement("a");
-        a2.className = "btn icon-btn";
-        a2.tabIndex = "0";
-        a2.innerHTML = '<svg width="24px" height="24px" fill="#ddd"><use href="#delete-icon" /></svg>';
-        a2.onclick = () => {
-            let pinned_raw = localStorage.getItem("redirector_pinned");
-            let pinned = JSON.parse(pinned_raw);
-            // pinned = pinned.filter(item => item !== redirector_pinned_store[i]);
-            pinned.splice(i, 1);
-            localStorage.setItem("redirector_pinned", JSON.stringify(pinned));
-            create_redirector_buttons();
-        };
-
-        div.appendChild(a2);
-
-
-        redirector_pinned.appendChild(div);
-    }
-
-    let redirector_history_store_raw = localStorage.getItem("redirector_history");
-
-    if (redirector_history_store_raw == null) {
-        localStorage.setItem("redirector_history", JSON.stringify([]));
-        redirector_history_store_raw = localStorage.getItem("redirector_history");
-    }
-
-
-    let redirector_history_store = JSON.parse(redirector_history_store_raw);
-
-    // history stuff
-    let redirector_history = document.getElementById("redirector-history");
-
-    redirector_history.innerHTML = "";
-
-    let history_text = document.createElement("p");
-    history_text.innerHTML = "History";
-    history_text.style.textAlign = "center";
-
-    redirector_history.appendChild(history_text);
-
-
-    for (let i = 0; i < redirector_history_store.length; i++) {
-        let div = document.createElement("div");
-        div.style.display = "flex";
-
-        let a1 = document.createElement("a");
-        a1.className = "btn small-btn";
-        a1.tabIndex = "0";
-        a1.innerHTML = redirector_history_store[i];
-        a1.onclick = () => {
-            window.location.replace(redirector_history_store[i]);
-        };
-        div.appendChild(a1);
-
-        let a2 = document.createElement("a");
-        a2.className = "btn icon-btn";
-        a2.tabIndex = "0";
-        a2.innerHTML = "&#9733;"
-        a2.onclick = () => {
-            let pinned_raw = localStorage.getItem("redirector_pinned");
-            let pinned = JSON.parse(pinned_raw);
-            pinned.unshift(redirector_history_store[i]);
-            localStorage.setItem("redirector_pinned", JSON.stringify(pinned));
-            create_redirector_buttons();
-        };
-        div.appendChild(a2);
-
-        let a3 = document.createElement("a");
-        a3.className = "btn icon-btn";
-        a3.tabIndex = "0";
-        a3.innerHTML = '<svg width="24px" height="24px" fill="#ddd"><use href="#delete-icon" /></svg>';
-        a3.onclick = () => {
-            let history_raw = localStorage.getItem("redirector_history");
-            let history = JSON.parse(history_raw);
-            // history = history.filter(item => item !== redirector_history_store[i]);
-            history.splice(i, 1);
-            localStorage.setItem("redirector_history", JSON.stringify(history));
-            create_redirector_buttons();
-        };
-        div.appendChild(a3);
-
-        redirector_history.appendChild(div);
-    }
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+            // pressing cancel works as expected, but pressing the back button unfortunately is the same as pressing ok
+            // so verify that the value is different
+            if (redirectorValue && redirectorValue !== lastRedirectorValue && redirectorValue !== "http://") {
+                localStorage.setItem(LOCALSTORE_REDIRECTOR_LAST_URL_KEY, redirectorValue);
+                window.location.href = redirectorValue;
+            }
+        }
+    });
 }
 
 function showToast(message, timeout = 2000) {
@@ -218,15 +202,33 @@ function showToast(message, timeout = 2000) {
 
     toastContainer.appendChild(toast);
 
-    // Trigger reflow and enable animation
+    // Trigger reflow to enable animation
     toast.offsetHeight;
 
     toast.classList.add('show');
 
-    setTimeout(() => {
-        toast.classList.add('hide');
-        toast.addEventListener('transitionend', () => {
-            toast.remove();
-        });
-    }, timeout);
+    if (timeout > 0) {
+        setTimeout(() => {
+            removeToast(toast);
+        }, timeout);
+    }
+
+    return toast;
+}
+
+function updateToastMessage(toast, message) {
+    if (!toast) {
+        return;
+    }
+    toast.textContent = message;
+}
+
+async function removeToast(toast) {
+    if (!toast) {
+        return;
+    }
+    toast.classList.add('hide');
+    toast.addEventListener('transitionend', () => {
+        toast.remove();
+    });
 }
