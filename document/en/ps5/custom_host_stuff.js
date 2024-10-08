@@ -3,8 +3,8 @@ async function runJailbreak() {
     l2_redirector.style.opacity = "0";
 
     // Hide jailbreak button and show console
-    document.getElementById("run-jb-parent").style.opacity = "0";
-    document.getElementById("console-parent").style.opacity = "1";
+    document.getElementById("run-jb-parent").style.display = "none";
+    document.getElementById("console-parent").style.display = "flex";
 
     setTimeout(async () => {
         let wk_exploit_type = localStorage.getItem("wk_exploit_type");
@@ -12,6 +12,7 @@ async function runJailbreak() {
             debug_log("[+] running psfree for userland exploit...");
             await run_psfree();
         } else if (wk_exploit_type == "fontface") {
+            debug_log("[+] running fontface for userland exploit...");
             await run_fontface();
         }
     }, 100);
