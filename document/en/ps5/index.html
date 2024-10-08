@@ -1,134 +1,57 @@
-<html manifest="cache.appcache">
-<!--<html>-->
+<html>
+<!-- <html manifest="cache.appcache"> -->
 
 <head>
     <title>PS5 UMTX Jailbreak</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="main.css">
-
-    <style>
-        .log {
-            display: block;
-            unicode-bidi: embed;
-            font-family: monospace;
-            white-space: pre;
-            font-size: 18px;
-            width: 100%;
-            height: 80%;
-            margin-top: 50px;
-            border: none;
-        }
-    </style>
 </head>
 
+<!-- body is set up as three rows: auto 1fr auto -->
 <body>
-    <svg style="display: none" version="2.0">
-        <defs>
-            <symbol id="delete-icon" viewBox="0 -960 960 960">
-                <path
-                    d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z" />
-            </symbol>
-            <symbol id="forward-arrow-icon" viewBox="0 -960 960 960" >
-                <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/>
-            </symbol>
-            
-        </defs>
-    </svg>
+    <!-- Row 1 -->
+    <div class="p-2">
+        <h1 class="text-center">PS5 UMTX Jailbreak (1.xx-5.xx)</h1>
+        <p class="text-center">Current firmware: <span class="text-bold" id="current-fw"></span></p>
 
-    <div id="toast-container"></div>
-    
-    <div id="redirector-view"
-        style="min-width: 100%; max-width: 100%; position: absolute; top: 0; left: -100%; min-height: 100%; max-height: 100%;">
-        <div style="overflow-y: scroll; width: 100%;max-height: 100vh;min-height: 100vh;" id="redirector-view-inner">
-            <h3 style="text-align: center;">Redirector</h3>
-            <div style="padding: 25px;padding-top: 0; display: flex;">
-                <input id="redirector-input" type="text" value="http://"
-                    style="width: 100%; border-radius: 10px; padding: 15px; background-color: #223; color: #fff; border-color: #334; font-size: 20px;" />
-                <a class="btn icon-btn" style="width: 100px;" tabindex="0" onclick="redirectorGo()">
-                    <svg width="32px" height="32px" fill="#ddd">
-                        <use href="#forward-arrow-icon" />
-                    </svg>
-                </a>
-            </div>
+        <!-- This is absolute positioned to the body-->
+        <div id="toast-container"></div>
+    </div>
 
-            <div style="display: flex; flex-direction: row; max-width: 100%; padding-left: 50px; padding-right: 50px;">
-                <div style="width: 60%; margin-right: 35px; " id="redirector-pinned"></div>
-                <div style="width: 1px; background-color: #557; margin-top: 10px;"></div>
-                <div style="width: 40%; margin-left: 35px; " id="redirector-history"></div>
-            </div>
+    <!-- Row 2 -->
+    <div id="main-content">
+        <div id="pre-jb-view" class="d-flex align-items-center justify-content-center selected">
+            <a tabindex="0" class="btn" id="run-jb" onclick="runJailbreak()">Jailbreak</a>
+        </div>
+
+        <div id="console-view">
+            <textarea id="console" class="log"></textarea>
         </div>
     </div>
 
-    <div id="center-view" style="position: absolute; top: 0; left: 0; width: 100%; min-height: 100%;">
+    <!-- Row 3 -->
+    <div class="position-relative text-center p-2 mb-2">
+        <p class="text-secondary" id="version">v1.2</p>
+        <p class="text-secondary">creds & greetz</p>
+        <h3 class="text-secondary mt-2">
+            <a href="https://x.com/fail0verflow">@fail0verflow</a>,
+            <a href="https://twitter.com/flat_z">@flat_z</a>,
+            <a href="https://twitter.com/SpecterDev">@SpecterDev</a>,
+            ChendoChap,
+            SlidyBat,
+            abc/psfree,
+            <br />
+            idlesauce,
+            <a href="https://x.com/znullptr">@znullptr</a>,
+            <a href="https://twitter.com/notnotzecoxao">@notnotzecoxao</a>,
+            <a href="https://twitter.com/SocraticBliss">@SocraticBliss</a>,
+            <a href="https://github.com/john-tornblom">John Tornblom</a>,
+            <a href="https://discord.gg/kbrzGuH3F6">PS5 R&D Discord</a>
+        </h3>
 
-        <div style="margin-top: 15px; position: absolute; width: 100%;">
-            <h1 style="text-align: center;">PS5 UMTX Jailbreak (1.xx-5.xx)</h1>
-            <p id="current-fw" class="text-secondary"
-                style="text-align: center; margin-bottom: 8px; padding-bottom: 0;">
-            </p>
-
-            <p id="listening-ip" class="text-secondary" style="text-align: center; margin-top: 0; padding-top: 0;">
-                <br />
-            </p>
-        </div>
-        <div style="position: absolute; margin: 20px; margin-right:28px; bottom: 0; right: 0px;" class="opacity-transition" id="l2-redirect">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 35px;">
-                <div >
-                    <span style="vertical-align: middle;display: inline-block;                ">
-                        <svg viewbox="0 0 79 61" xmlns="http://www.w3.org/2000/svg" style="width: 32px; height:32px;">
-                            <rect x="0" y="0" width="79" height="61" rx="13" ry="13" fill="#bdc0c2" />
-                            <text x="50%" y="50%" dy="17.5px" text-anchor="middle" fill="#4e4e4e" font-size="50"
-                                font-weight="bold">L2</text>
-                        </svg>
-                    </span>
-                    <span
-                        style="font-size: 18px; vertical-align: middle;display: inline-block; margin-left: 8px; font-weight: bold; color: #fff;">Redirect</span>
-                </div>
-                <div >
-                    <span style="vertical-align: middle;display: inline-block;                ">
-                        <svg viewbox="0 0 79 61" xmlns="http://www.w3.org/2000/svg" style="width: 32px; height:32px;">
-                            <rect x="0" y="0" width="79" height="61" rx="13" ry="13" fill="#bdc0c2" />
-                            <text x="50%" y="50%" dy="17.5px" text-anchor="middle" fill="#4e4e4e" font-size="50"
-                                font-weight="bold">R2</text>
-                        </svg>
-                    </span>
-                    <span
-                        style="font-size: 18px; vertical-align: middle;display: inline-block; margin-left: 8px; font-weight: bold; color: #fff;">Options</span>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <div id="console-parent" class="opacity-transition"
-                style="display: none; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
-                <textarea id="console" class="log"></textarea>
-            </div>
-
-            <div id="run-jb-parent" class="opacity-transition"
-                style="display: none; justify-content: center; align-items: center; position: absolute; top: 0;left: 0; width: 100%; height: 100%;">
-                <a tabindex="0" class="btn" style="max-width: 50%;" id="run-jb" onclick="runJailbreak()">Jailbreak</a>
-            </div>
-
-            <center style="position: fixed;bottom: 0;width: 100%;margin-bottom: 10px;font-size: 13px;"
-                class="info opacity-transition" id="credits">
-                <b id="version">v1.2</b><br />
-                <span>creds & greetz</span>
-                <h3>
-                    <a href="https://x.com/fail0verflow">@fail0verflow</a>, 
-                    <a href="https://twitter.com/flat_z">@flat_z</a>, 
-                    <a href="https://twitter.com/SpecterDev">@SpecterDev</a>, 
-                    ChendoChap, 
-                    SlidyBat, 
-                    abc/psfree, 
-                    <br />
-                    idlesauce, 
-                    <a href="https://x.com/znullptr">@znullptr</a>, 
-                    <a href="https://twitter.com/notnotzecoxao">@notnotzecoxao</a>, 
-                    <a href="https://twitter.com/SocraticBliss">@SocraticBliss</a>, 
-                    <a href="https://github.com/john-tornblom">John Tornblom</a>, 
-                    <a href="https://discord.gg/kbrzGuH3F6">PS5 R&D Discord</a>
-                </h3>
-            </center>
+        <div class="position-absolute d-flex align-items-center bottom-0 left-0 m-4"> 
+            <div class="l2-redirect-box">L2</div>
+            <span class="ml-2">Redirect</span>
         </div>
     </div>
 
@@ -136,7 +59,6 @@
     <script src="rop.js"></script>
     <script src="exploit.js"></script>
     <script src="custom_host_stuff.js"></script>
-    <script src="appcache_handler.js"></script>
     <script src="module/utils.js"></script>
     <script src="module/constants.js"></script>
     <script src="module/int64.js"></script>
@@ -146,7 +68,7 @@
     <script src="module/syscalls.js"></script>
     <script src="webkit_psfree.js"></script>
     <script src="webkit_fontface.js"></script>
-
+    
     <script>
         addEventListener('unhandledrejection', (event) => {
             const reason = event.reason;
@@ -157,17 +79,18 @@
                 + `${reason.sourceURL}:${reason.line}:${reason.column}\n`
                 + `${reason.stack}`
             );
-            //alert(reason);
             throw reason;
         });
-
-        //window.addEventListener('load', function () {
-        //    onload_setup();
-        //}, false);
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("run-jb-parent").style.display = "flex";
-        });
+        document.getElementById("current-fw").innerHTML = fw_str;
+        localStorage.setItem(LOCALSTORE_WK_EXPLOIT_TYPE_KEY, LOCALSTORE_WK_EXPLOIT_TYPE_VALUE_PSFREE);
+        registerAppCacheEventHandlers();
+        registerL2ButtonHandler();
+        window.onload = function() {
+            if (sessionStorage.getItem(SESSIONSTORE_RUN_WK_EXPLOIT_ON_LOAD_KEY)) {
+                runJailbreak(false);
+            }
+        };
     </script>
 </body>
+
 </html>
