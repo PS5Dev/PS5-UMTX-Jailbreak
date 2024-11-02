@@ -382,10 +382,10 @@ const OFFSET_KERNEL_STACK_SYS_SCHED_YIELD_RET   = 0x00000808;
 // Kernel text-relative offsets
 const OFFSET_KERNEL_DATA                        = 0x00C50000;
 const OFFSET_KERNEL_SYS_SCHED_YIELD_RET         = 0x00599CF2;
-const OFFSET_KERNEL_ALLPROC                     = 0x0355DD00; // data = 0x0290DD00
-const OFFSET_KERNEL_SECURITY_FLAGS              = 0x072866EC; // data = 0x066366EC
-const OFFSET_KERNEL_TARGETID                    = 0x072866F5; // data = 0x066366F5
-const OFFSET_KERNEL_QA_FLAGS                    = 0x07286710; // data = 0x06636710
-const OFFSET_KERNEL_UTOKEN_FLAGS                = 0x07286778; // data = 0x06636778
-const OFFSET_KERNEL_PRISON0                     = 0x02A63470; // data = 0x01E13470
-const OFFSET_KERNEL_ROOTVNODE                   = 0x07493510; // data = 0x06843510
+const OFFSET_KERNEL_ALLPROC                     = 0x0355DD00;
+const OFFSET_KERNEL_SECURITY_FLAGS              = 0x072866EC;
+const OFFSET_KERNEL_TARGETID                    = 0x072866F5;
+const OFFSET_KERNEL_QA_FLAGS                    = 0x07286710;
+const OFFSET_KERNEL_UTOKEN_FLAGS                = 0x07286778;
+const OFFSET_KERNEL_PRISON0                     = 0x02A63470;
+const OFFSET_KERNEL_ROOTVNODE                   = 0x07493510;
